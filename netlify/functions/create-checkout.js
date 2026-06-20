@@ -1,6 +1,6 @@
 const Stripe = require('stripe');
 const headers = {
-  'Access-Control-Allow-Origin': 'https://askthearmory.com',
+  'Access-Control-Allow-Origin': 'https://askthegavel.com',
   'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Content-Type': 'application/json'
@@ -22,7 +22,7 @@ exports.handler = async (event) => {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'The Armory — Weapons Intelligence Pack',
+              name: 'The Gavel — Courtroom Intelligence Pack',
               description: '100 Research Consults + lifetime account access',
             },
             unit_amount: 1999,
@@ -31,8 +31,8 @@ exports.handler = async (event) => {
         },
       ],
       mode: 'payment',
-      success_url: `https://askthearmory.com/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://askthearmory.com`,
+      success_url: `https://askthegavel.com/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://askthegavel.com`,
     });
     return {
       statusCode: 200,
