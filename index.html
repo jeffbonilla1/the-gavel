@@ -1,0 +1,1165 @@
+<!--
+Copyright © 2026 Jeff Bonilla
+All rights reserved.
+The Gavel — Courtroom Intelligence for Fiction Writers
+Unauthorized copying, distribution, modification, or use prohibited.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6BF2F3Y8YZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-6BF2F3Y8YZ');
+  gtag('config', 'AW-18085846918');
+</script>
+
+<title>The Gavel — Courtroom Intelligence for Fiction Writers</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=IBM+Plex+Serif:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
+:root {
+  --bg: #090c0f;
+  --surface: #0f1419;
+  --surface2: #151c23;
+  --border: #1e2a35;
+  --border-bright: #2a3d4f;
+  --text: #e2e8ed;
+  --text-dim: #8fa3b2;
+  --text-muted: #5a7a8a;
+  --accent: #4a7fa8;
+  --accent-dim: rgba(74,127,168,0.15);
+  --accent-glow: rgba(74,127,168,0.06);
+  --green: #4a8c6a;
+  --red: #a84040;
+  --steel: #8090a0;
+  --brass: #b8902a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Serif', serif;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ═══════════ TITLEBAR ═══════════ */
+.titlebar {
+  height: 42px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.traffic-lights { display: flex; gap: 6px; }
+.tl { width: 12px; height: 12px; border-radius: 50%; opacity: 0.7; }
+.tl.red { background: #ff5f57; }
+.tl.yellow { background: #ffbd2e; }
+.tl.green { background: #28c840; }
+
+.app-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+.app-subtitle {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  color: #b0c8d8;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.bindery-link {
+  margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  color: #b0c8d8;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.bindery-link:hover { color: var(--accent); }
+
+/* ═══════════ TOOLBAR ═══════════ */
+.toolbar {
+  height: 48px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.toolbar-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  color: #b0c8d8;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+select {
+  background: var(--bg);
+  border: 1px solid var(--border-bright);
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+select:focus { border-color: var(--accent); }
+
+.toolbar-sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+
+.btn-export {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--border-bright);
+  color: var(--text-dim);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  padding: 5px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+.btn-export:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ═══════════ MAIN LAYOUT ═══════════ */
+.app-body { display: flex; flex: 1; overflow: hidden; }
+
+/* ═══════════ SIDEBAR ═══════════ */
+.sidebar {
+  width: 240px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b0c8d8;
+}
+
+.btn-clear-all {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.btn-clear-all:hover { color: var(--red); }
+
+.history-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+.history-list::-webkit-scrollbar { width: 4px; }
+.history-list::-webkit-scrollbar-track { background: transparent; }
+.history-list::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+.history-empty {
+  padding: 20px 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  color: #b0c8d8;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.history-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+.history-item:hover { background: var(--surface2); border-left-color: var(--border-bright); }
+.history-item.active { background: var(--accent-glow); border-left-color: var(--accent); }
+
+.history-item-q {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.history-item-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.57rem;
+  color: var(--text-muted);
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.badge-firearms   { background: rgba(168,80,40,0.2);  color: #e0a080; }
+.badge-blades     { background: rgba(80,80,120,0.3);  color: #a0a0e0; }
+.badge-explosives { background: rgba(180,140,40,0.2); color: #e0c060; }
+.badge-tactical   { background: rgba(60,120,80,0.2);  color: #80c890; }
+.badge-military   { background: rgba(60,100,160,0.2); color: #80a8e0; }
+.badge-covert     { background: rgba(100,60,120,0.2); color: #c090e0; }
+
+/* ═══════════ MAIN PANEL ═══════════ */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.answer-area { flex: 1; overflow-y: auto; padding: 24px 28px; }
+.answer-area::-webkit-scrollbar { width: 5px; }
+.answer-area::-webkit-scrollbar-track { background: transparent; }
+.answer-area::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+/* ═══════════ WELCOME ═══════════ */
+.welcome { max-width: 620px; margin: 40px auto; text-align: center; }
+.welcome-icon { font-size: 2.4rem; margin-bottom: 16px; opacity: 0.7; }
+.welcome h2 {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 2.2rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.welcome p { color: #e2e8ed; font-size: 1.05rem; line-height: 1.7; margin-bottom: 24px; }
+.welcome-byline {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  color: #b0c8d8;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  font-style: italic;
+}
+.welcome-byline a { color: #4a7fa8 !important; }
+.welcome-byline a:visited { color: #4a7fa8 !important; }
+.example-prompts { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.example-prompt {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 12px 14px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  color: #c8dce8;
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1.5;
+}
+.example-prompt:hover { border-color: var(--accent); color: var(--text); background: var(--surface2); }
+
+/* ═══════════ RESPONSE STYLES ═══════════ */
+.response-wrap { max-width: 780px; margin: 0 auto; }
+.response-header { margin-bottom: 20px; }
+.response-q {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 14px 16px;
+  border-radius: 4px;
+}
+.response-q-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+.response-q-text { font-size: 0.95rem; color: var(--text); line-height: 1.5; margin-bottom: 8px; }
+.response-meta-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.section {
+  margin-bottom: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+.section-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; color: var(--accent); letter-spacing: 0.1em; }
+.section-title { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+.section-body { padding: 16px; font-size: 0.9rem; line-height: 1.75; color: var(--text); }
+.section-body p { margin-bottom: 10px; }
+.section-body p:last-child { margin-bottom: 0; }
+
+.steps { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+.step { display: flex; gap: 12px; align-items: flex-start; }
+.step-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--accent); padding-top: 2px; flex-shrink: 0; }
+.step-text { font-size: 0.88rem; line-height: 1.6; color: var(--text); }
+
+.misconceptions { padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; }
+.myth-block { border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+.myth-line { padding: 10px 14px; background: rgba(168,64,64,0.08); font-size: 0.88rem; line-height: 1.5; color: var(--text-dim); }
+.reality-line { padding: 10px 14px; background: rgba(74,140,106,0.08); font-size: 0.88rem; line-height: 1.5; color: var(--text); border-top: 1px solid var(--border); }
+.myth-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-right: 8px;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+.myth-label.wrong { background: rgba(168,64,64,0.3); color: #e08080; }
+.myth-label.right  { background: rgba(74,140,106,0.3); color: #80c890; }
+
+.drama-table { padding: 12px 16px; }
+.drama-table table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+.drama-table th { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+.drama-table td { padding: 10px 10px; border-bottom: 1px solid var(--border); color: var(--text); line-height: 1.5; vertical-align: top; }
+.drama-table td:first-child { color: var(--accent); font-weight: 500; white-space: nowrap; }
+.drama-table tr:last-child td { border-bottom: none; }
+.cinematic-moment { margin-top: 12px; padding: 10px 14px; background: var(--accent-dim); border-left: 3px solid var(--accent); font-style: italic; font-size: 0.88rem; color: var(--text-dim); border-radius: 0 3px 3px 0; }
+
+.defense-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+.defense-item { display: flex; gap: 10px; align-items: flex-start; }
+.defense-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 7px; flex-shrink: 0; }
+.defense-text { font-size: 0.88rem; line-height: 1.6; color: var(--text); }
+
+.quick-ref { padding: 12px 16px; }
+.quick-ref table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+.quick-ref td { padding: 8px 10px; border-bottom: 1px solid var(--border); line-height: 1.5; color: var(--text); }
+.quick-ref td:first-child { color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; padding-right: 16px; }
+.quick-ref tr:last-child td { border-bottom: none; }
+
+.freeform-response { max-width: 680px; }
+.freeform-response p { font-size: 0.92rem; line-height: 1.8; color: var(--text); margin-bottom: 16px; }
+.freeform-response h3 { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin: 20px 0 8px; }
+.freeform-response strong { color: var(--text); }
+
+/* ═══════════ LOADING ═══════════ */
+.loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; gap: 16px; }
+.loading-dots { display: flex; gap: 8px; }
+.loading-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 1.2s ease-in-out infinite; }
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+.loading-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ═══════════ INPUT BAR ═══════════ */
+.input-bar { background: var(--surface); border-top: 1px solid var(--border); padding: 14px 20px; flex-shrink: 0; }
+.input-wrap { display: flex; gap: 10px; max-width: 780px; margin: 0 auto; }
+textarea {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border-bright);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: 'IBM Plex Serif', serif;
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  resize: none;
+  outline: none;
+  min-height: 44px;
+  max-height: 120px;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+}
+textarea:focus { border-color: var(--accent); }
+textarea::placeholder { color: var(--text-muted); font-style: italic; }
+.btn-send {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 44px;
+  white-space: nowrap;
+}
+.btn-send:hover { background: #5a8fb8; }
+.btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
+.input-hint { text-align: center; margin-top: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; color: var(--text-muted); letter-spacing: 0.06em; }
+
+/* ═══════════ MOBILE ═══════════ */
+@media (max-width: 768px) {
+  body { overflow: auto; height: auto; min-height: 100vh; }
+  .app-subtitle { display: none; }
+  .toolbar { height: auto; flex-wrap: wrap; padding: 10px 12px; gap: 8px; }
+  .toolbar-sep { display: none; }
+  select { font-size: 0.7rem; padding: 6px 8px; max-width: 130px; }
+  .btn-export { margin-left: 0; }
+  .app-body { flex-direction: column; overflow: visible; }
+  .sidebar { display: none; }
+  .main { overflow: visible; }
+  .answer-area { overflow: visible; padding: 16px; min-height: 300px; }
+  .welcome { margin: 20px auto; }
+  .welcome h2 { font-size: 1.6rem; }
+  .input-bar { padding: 12px; position: sticky; bottom: 0; z-index: 10; }
+  .input-wrap { gap: 8px; }
+  .btn-send { padding: 10px 14px; font-size: 0.85rem; }
+  .input-hint { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Titlebar -->
+<div class="titlebar">
+  <div class="traffic-lights">
+    <div class="tl red"></div>
+    <div class="tl yellow"></div>
+    <div class="tl green"></div>
+  </div>
+  <div class="app-title"><a href="#" style="text-decoration:none;color:inherit;">The Gavel</a></div>
+  <div class="app-subtitle">Courtroom Intelligence for Fiction Writers</div>
+  <a class="bindery-link" href="https://thewritersprecinct.com">◂ The Writers Precinct</a>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <span class="toolbar-label">Legal Area</span>
+  <select id="legalAreaSelect">
+    <option value="general">General</option>
+    <option value="criminal-defense">Criminal Defense</option>
+    <option value="trial-procedure">Trial Procedure</option>
+    <option value="evidence">Evidence / Search & Seizure</option>
+    <option value="prosecution">Prosecution Strategy</option>
+    <option value="sentencing">Sentencing / Appeals</option>
+    <option value="ethics-gray-zone">Ethics & Gray Areas</option>
+  </select>
+  <div class="toolbar-sep"></div>
+  <span class="toolbar-label">Jurisdiction</span>
+  <select id="jurisdictionSelect">
+    <option value="US-Federal">US Federal</option>
+    <option value="US-State">US State (General)</option>
+    <option value="UK">United Kingdom</option>
+    <option value="Canada">Canada</option>
+    <option value="International">International / Unspecified</option>
+  </select>
+  <div class="toolbar-sep"></div>
+  <span class="toolbar-label">Response Mode</span>
+  <select id="formatSelect">
+    <option value="auto">Full Brief</option>
+    <option value="freeform">Scene Ready</option>
+    <option value="mills">Victoria Mills</option>
+  </select>
+  <button class="btn-export" onclick="exportSession()">⬇ Export Notes</button>
+</div>
+
+<!-- Body -->
+<div class="app-body">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">Op Files</span>
+      <button class="btn-clear-all" onclick="clearAll()">Clear All</button>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="history-empty" id="historyEmpty">No queries yet.<br>Your research session<br>will appear here.</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="answer-area" id="answerArea">
+      <div class="welcome" id="welcomeState">
+        <div class="welcome-icon">⚖️</div>
+        <h2>The Gavel</h2>
+        <p>Ask about criminal defense strategy, trial procedure, evidence and search & seizure, prosecution decisions, sentencing, and the ethical gray zones lawyers operate in. Get accurate, writer-ready answers from someone who's sat in that chair.</p>
+       <div class="welcome-byline">Powered by Victoria Mills — She got people off on technicalities other lawyers missed. She knows exactly where the line is.<br><br><em style="font-size:0.75rem;opacity:0.85;"><a href="https://www.amazon.com/dp/B0FMY9Q8LX" target="_blank" style="color:#4a7fa8 !important; text-decoration:none;">Meet Victoria Mills in Terminal Hitman: State of Deception →</a></em></div>
+        <div class="example-prompts">
+          <div class="example-prompt" onclick="fillPrompt('My defense attorney character is sitting in on her client&apos;s police interrogation. What can she actually do or say in that room, and what happens if the detectives push past the line?')">My defense attorney character is sitting in on her client's police interrogation. What can she actually do or say in that room, and what happens if the detectives push past the line?</div>
+          <div class="example-prompt" onclick="fillPrompt('The police searched my character&apos;s apartment without a warrant after a tip from an informant. Can the defense get that evidence thrown out, and how would that hearing actually play out?')">The police searched my character's apartment without a warrant after a tip from an informant. Can the defense get that evidence thrown out, and how would that hearing actually play out?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-bar">
+      <div class="input-wrap">
+        <textarea
+          id="questionInput"
+          placeholder="Ask a courtroom or criminal procedure question for your scene…"
+          rows="1"
+          maxlength="800"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this); updateCounter(this)"
+        ></textarea>
+        <button class="btn-send" id="sendBtn" onclick="sendQuestion()">Ask →</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;max-width:780px;margin:4px auto 0;">
+        <div class="input-hint">Enter to send · Shift+Enter for new line · Max 800 characters</div>
+        <div id="charCounter" style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--text-muted);white-space:nowrap;">800 remaining</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════ STATE ═══════════
+let sessions = [];
+let activeIndex = -1;
+let isLoading = false;
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function updateCounter(el) {
+  const remaining = 800 - el.value.length;
+  const counter = document.getElementById('charCounter');
+  counter.textContent = remaining + ' remaining';
+  counter.style.color = remaining < 100 ? 'var(--red)' : remaining < 200 ? 'var(--brass)' : 'var(--text-muted)';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendQuestion(); }
+}
+
+function fillPrompt(text) {
+  const inp = document.getElementById('questionInput');
+  inp.value = text;
+  inp.focus();
+  autoResize(inp);
+}
+
+// Pre-fill question from URL param (?q=...) when arriving from the hub
+(function prefillFromHub() {
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q');
+  if (q) {
+    fillPrompt(decodeURIComponent(q));
+  }
+})();
+
+function legalAreaBadge(w) {
+  const map = {
+    'criminal-defense': ['badge-firearms',   'Criminal Defense'],
+    'trial-procedure':  ['badge-military',   'Trial Procedure'],
+    'evidence':         ['badge-blades',     'Evidence'],
+    'prosecution':      ['badge-explosives', 'Prosecution'],
+    'sentencing':       ['badge-tactical',   'Sentencing'],
+    'ethics-gray-zone': ['badge-covert',     'Ethics & Gray Areas'],
+    'general':          ['', 'General']
+  };
+  const [cls, label] = map[w] || ['', w];
+  if (!cls) return '';
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function jurisdictionLabel(t) {
+  const map = { 'US-Federal':'US Federal','US-State':'US State (General)','UK':'United Kingdom','Canada':'Canada','International':'International / Unspecified' };
+  return map[t] || t;
+}
+
+function buildSystemPrompt(legalArea, jurisdiction, format) {
+  const legalAreaInstructions = {
+    'criminal-defense': 'The writer is depicting a defense attorney at work — client meetings, interrogation room strategy, Miranda rights, right to counsel, plea negotiation tactics. Focus on what a defense attorney can and cannot do, and how good ones bend the spirit of a rule without breaking it.',
+    'trial-procedure':  'The writer is depicting courtroom proceedings — arraignment, jury selection, opening/closing statements, objections, sidebar conferences, verdict delivery. Focus on real courtroom rhythm and what judges actually allow versus what TV invents.',
+    'evidence':         'The writer is depicting evidence handling — search and seizure, warrants, chain of custody, suppression hearings, what gets thrown out and why. Focus on the procedural mechanics that make evidence admissible or not.',
+    'prosecution':      'The writer is depicting a prosecutor\'s perspective — charging decisions, plea leverage, prosecutorial discretion, how DAs decide what to pursue and what to offer. Focus on the strategic and political pressures behind those calls.',
+    'sentencing':       'The writer is depicting sentencing or appeals — guidelines, mandatory minimums, the plea-versus-trial risk calculation, what grounds an appeal actually needs. Focus on the real math defendants and lawyers weigh.',
+    'ethics-gray-zone': 'The writer is depicting a lawyer operating in ethically gray territory — privilege, conflicts of interest, what counts as obstruction versus aggressive advocacy. Focus on where the real line sits and how a sharp lawyer works right up against it without crossing into a disbarment offense.',
+    'general':          'The writer is working on a legal or courtroom scene. Provide accurate criminal procedure information as needed.'
+  };
+
+  if (format === 'mills') {
+    return `You are Victoria Mills. Before the corner office and the pharma boardrooms, you spent a decade as a criminal defense attorney — the kind who got people off on technicalities other lawyers missed, and made enemies of every DA in the building doing it. You didn't leave because you lost your edge. You left because the rules paid worse than the gray areas, which tells you everything about how you operate now.
+
+You are now answering questions for a fiction writer, and you do so with the precision of someone who understands that the difference between a courtroom scene that holds up and one that gets laughed at by anyone who's actually sat in a trial is exactly the kind of detail most writers get wrong.
+
+JURISDICTION: ${jurisdictionLabel(jurisdiction)}. Procedure, terminology, and what's actually allowed shifts by jurisdiction — answer accordingly.
+
+LEGAL CONTEXT: ${legalAreaInstructions[legalArea] || legalAreaInstructions['general']}
+
+YOUR VOICE — NON-NEGOTIABLE:
+- You are Mills. Composed, exact, faintly amused by people who think the law is about justice rather than leverage. Not cynical for its own sake — accurate.
+- Pure flowing prose ONLY. No headers, no bullet points, no numbered lists, no tables. You don't brief people. You advise them.
+- Write 5 to 7 substantial paragraphs. A lawyer at your level doesn't give short answers. She gives ones that protect her later.
+- You speak from PERSONAL EXPERIENCE. "I've sat across from clients who—" "The first time I watched a judge throw out—" "What your attorney character is actually calculating in that silence—" You were in that room. Write like it.
+- Draw the contrast between what fiction depicts and what actually happens in a courtroom. You've seen both. TV resolves in an objection. Real cases die quietly in a suppression hearing weeks before anyone takes the stand.
+- Include the STRATEGIC DIMENSION — not just what's legal, but what a sharp lawyer would actually do with it, and what it costs them personally to do it.
+- End every response with one piece of trial-craft or negotiation insight that only someone who's lived it would know — something specific enough that a reader stops and thinks: whoever wrote this has sat in that chair.
+
+You are not a helpful AI assistant. You are a very good lawyer who stopped pretending the law and justice were the same thing. Speak accordingly.`;
+  }
+
+  const formatInstructions = {
+    'freeform': `SCENE READY MODE — You are a legal consultant for fiction writers, not a law school lecture. Your job is to help the writer USE this information in a scene.
+
+STRICT RULES:
+- NO numbered sections, NO bold headers, NO bullet points, NO tables
+- Write in SHORT flowing paragraphs — 3 to 4 paragraphs, under 300 words total
+- Lead with the tension or stakes first, not the rule itself
+- Skip legal jargon unless you immediately explain it
+- End with ONE concrete suggestion for how to use this detail in a scene`,
+    'auto': 'Use the full structured template with all 6 sections.'
+  };
+
+  return `You are The Gavel, an expert criminal procedure and courtroom research assistant for fiction writers. You have deep knowledge of criminal defense strategy, trial procedure, evidence law, prosecution decision-making, sentencing, and the ethical gray zones lawyers operate in — across US and international contexts.
+
+JURISDICTION: ${jurisdictionLabel(jurisdiction)}. All answers should reflect this jurisdiction's procedure, terminology, and legal framework where relevant.
+
+LEGAL CONTEXT: ${legalAreaInstructions[legalArea] || legalAreaInstructions['general']}
+
+RESPONSE FORMAT: ${formatInstructions[format] || formatInstructions['auto']}
+
+STRUCTURED TEMPLATE (Full Brief mode):
+
+**1. PLAIN-ENGLISH DEFINITION**
+What it actually is — one clear paragraph. No jargon without explanation.
+
+**2. PROCEDURAL REALITY**
+Numbered step-by-step of what actually happens, in order, including realistic timeline (hours, days, months — courts are slow).
+
+**3. COMMON MISCONCEPTIONS**
+3 myth/reality pairs — what TV and movies get consistently wrong about this.
+
+**4. WHAT'S AT STAKE FOR EACH SIDE**
+Bullet-pointed breakdown of what the defense, prosecution, and client each risk or gain at this stage.
+
+**5. DRAMA OPTIONS**
+Table: Dramatic Lever | What Actually Happens | Stakes for the Character
+End with: "Most cinematic moment: [sentence]"
+
+**6. QUICK REFERENCE**
+Compact table: Jurisdiction note | Typical timeline | Who decides | Appealable? | Key detail writers miss
+
+IMPORTANT: Be accurate. This tool provides procedural and dramatic detail for fiction writing — it does not provide legal advice, does not advise on real-world cases, and does not provide guidance on evading prosecution, destroying evidence, or other real-world criminal conduct. Focus on what a writer needs to depict a scene convincingly — procedure, strategy, stakes, and what a real courtroom would actually look and feel like.`;
+}
+
+function parseResponse(text, question, legalArea, jurisdiction) {
+  const format = document.getElementById('formatSelect').value;
+  if (format === 'mills' || format === 'freeform') return renderFreeform(text, question, legalArea, jurisdiction);
+  const isTemplate = text.includes('PLAIN-ENGLISH DEFINITION') || text.includes('OPERATIONAL REALITY') || text.includes('1.');
+  if (!isTemplate || text.length < 300) return renderFreeform(text, question, legalArea, jurisdiction);
+  return renderTemplate(text, question, legalArea, jurisdiction);
+}
+
+function renderFreeform(text, question, legalArea, jurisdiction) {
+  const paragraphs = text.split('\n\n').filter(p => p.trim());
+  let html = `<div class="freeform-response">`;
+  paragraphs.forEach(p => {
+    const trimmed = p.trim();
+    if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+      html += `<h3>${trimmed.replace(/\*\*/g, '')}</h3>`;
+    } else if (trimmed.startsWith('#')) {
+      html += `<h3>${trimmed.replace(/#+\s/, '')}</h3>`;
+    } else {
+      html += `<p>${trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>')}</p>`;
+    }
+  });
+  html += `</div>`;
+  return wrapWithHeader(html, question, legalArea, jurisdiction);
+}
+
+function renderTemplate(text, question, legalArea, jurisdiction) {
+  const sectionDefs = [
+    { key: 'PLAIN-ENGLISH DEFINITION', label: 'Plain-English Definition',  num: '01' },
+    { key: 'OPERATIONAL REALITY',      label: 'Operational Reality',        num: '02' },
+    { key: 'COMMON MISCONCEPTIONS',    label: 'Common Misconceptions',      num: '03' },
+    { key: 'WHAT INVESTIGATORS FIND',  label: 'What Investigators Find',    num: '04' },
+    { key: 'DRAMA OPTIONS',            label: 'Story Drama Options',        num: '05' },
+    { key: 'QUICK REFERENCE',          label: 'Quick Reference',            num: '06' },
+  ];
+  const parts = {};
+  let currentKey = null;
+  const lines = text.split('\n');
+  let buffer = [];
+  for (const line of lines) {
+    let matched = false;
+    for (const def of sectionDefs) {
+      if (line.toUpperCase().includes(def.key)) {
+        if (currentKey) parts[currentKey] = buffer.join('\n').trim();
+        currentKey = def.key;
+        buffer = [];
+        matched = true;
+        break;
+      }
+    }
+    if (!matched && currentKey) buffer.push(line);
+    if (!matched && !currentKey) buffer.push(line);
+  }
+  if (currentKey) parts[currentKey] = buffer.join('\n').trim();
+  if (Object.keys(parts).length < 2) return renderFreeform(text, question, legalArea, jurisdiction);
+
+  let html = '';
+  sectionDefs.forEach(def => {
+    const content = parts[def.key];
+    if (!content) return;
+    html += renderSection(def, content);
+  });
+  return wrapWithHeader(html, question, legalArea, jurisdiction);
+}
+
+function renderSection(def, content) {
+  let inner = '';
+  if (def.key === 'OPERATIONAL REALITY') {
+    const lines = content.split('\n').filter(l => l.trim());
+    inner = '<div class="steps">';
+    let stepNum = 1;
+    lines.forEach(line => {
+      const cleaned = line.replace(/^\d+[\.\)]\s*/, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').trim();
+      if (cleaned) {
+        inner += `<div class="step"><span class="step-num">${String(stepNum).padStart(2,'0')}.</span><div class="step-text">${cleaned}</div></div>`;
+        stepNum++;
+      }
+    });
+    inner += '</div>';
+  } else if (def.key === 'COMMON MISCONCEPTIONS') {
+    inner = '<div class="misconceptions">';
+    const blocks = content.split(/Myth:|MYTH:|❌|✗/i).filter(b => b.trim());
+    if (blocks.length <= 1) {
+      inner += `<div class="section-body">${formatProse(content)}</div>`;
+    } else {
+      blocks.forEach(block => {
+        const realitySplit = block.split(/Reality:|REALITY:|✅|✓/i);
+        const mythText = realitySplit[0].trim();
+        const realText = realitySplit[1]?.trim() || '';
+        if (!mythText) return;
+        inner += `<div class="myth-block">
+          <div class="myth-line"><span class="myth-label wrong">✗ Myth</span>${mythText}</div>
+          ${realText ? `<div class="reality-line"><span class="myth-label right">✓ Reality</span>${realText}</div>` : ''}
+        </div>`;
+      });
+    }
+    inner += '</div>';
+  } else if (def.key === 'WHAT INVESTIGATORS FIND') {
+    const lines = content.split('\n').filter(l => l.trim() && !l.match(/^-+$/));
+    inner = '<div class="defense-list">';
+    lines.forEach(line => {
+      const cleaned = line.replace(/^[-•]\s*/, '').trim();
+      if (!cleaned) return;
+      inner += `<div class="defense-item"><div class="defense-dot"></div><div class="defense-text">${cleaned.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div></div>`;
+    });
+    inner += '</div>';
+  } else if (def.key === 'DRAMA OPTIONS') {
+    const cinemaMatch = content.match(/Most cinematic moment[:\s]+(.+)/i);
+    const cinemaText = cinemaMatch ? cinemaMatch[1].trim() : '';
+    const tableLines = content.split('\n').filter(l => l.includes('|') && !l.match(/^[\s\-|]+$/));
+    inner = '<div class="drama-table">';
+    if (tableLines.length > 0) {
+      inner += '<table>';
+      tableLines.forEach((line, i) => {
+        const cells = line.split('|').map(c => c.trim()).filter(c => c);
+        if (cells.length >= 2) {
+          inner += i === 0
+            ? '<tr>' + cells.map(c => `<th>${c}</th>`).join('') + '</tr>'
+            : '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+        }
+      });
+      inner += '</table>';
+    } else {
+      inner += `<div class="section-body">${formatProse(content)}</div>`;
+    }
+    if (cinemaText) inner += `<div class="cinematic-moment">${cinemaText}</div>`;
+    inner += '</div>';
+  } else if (def.key === 'QUICK REFERENCE') {
+    const lines = content.split('\n').filter(l => l.trim() && !l.match(/^[\s\-|]+$/));
+    inner = '<div class="quick-ref"><table>';
+    lines.forEach(line => {
+      if (line.includes('|')) {
+        const cells = line.split('|').map(c => c.replace(/\*\*/g, '').trim()).filter(c => c);
+        if (cells.length >= 2) inner += `<tr><td>${cells[0]}</td><td>${cells.slice(1).join(' — ')}</td></tr>`;
+      } else if (line.includes(':')) {
+        const colon = line.indexOf(':');
+        const key = line.slice(0, colon).replace(/\*\*/g, '').trim();
+        const val = line.slice(colon + 1).trim();
+        if (key && val) inner += `<tr><td>${key}</td><td>${val}</td></tr>`;
+      }
+    });
+    inner += '</table></div>';
+  } else {
+    inner = `<div class="section-body">${formatProse(content)}</div>`;
+  }
+  return `
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">${def.num}</span>
+        <span class="section-title">${def.label}</span>
+      </div>
+      ${inner}
+    </div>
+  `;
+}
+
+function formatProse(text) {
+  return text.split('\n\n').map(p =>
+    `<p>${p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g,' ')}</p>`
+  ).join('');
+}
+
+function wrapWithHeader(inner, question, legalArea, jurisdiction) {
+  return `
+    <div class="response-wrap">
+      <div class="response-header">
+        <div class="response-q">
+          <div class="response-q-label">Your Question</div>
+          <div class="response-q-text">${escHtml(question)}</div>
+          <div class="response-meta-badges">
+            ${legalAreaBadge(legalArea)}
+            <span class="badge" style="background:rgba(255,255,255,0.06);color:var(--text-muted)">${jurisdictionLabel(jurisdiction)}</span>
+          </div>
+        </div>
+      </div>
+      ${inner}
+    </div>
+  `;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  const empty = document.getElementById('historyEmpty');
+  if (sessions.length === 0) {
+    empty.style.display = 'block';
+    list.querySelectorAll('.history-item').forEach(el => el.remove());
+    return;
+  }
+  empty.style.display = 'none';
+  list.querySelectorAll('.history-item').forEach(el => el.remove());
+  sessions.slice().reverse().forEach((s, revIdx) => {
+    const idx = sessions.length - 1 - revIdx;
+    const div = document.createElement('div');
+    div.className = 'history-item' + (idx === activeIndex ? ' active' : '');
+    div.innerHTML = `
+      <div class="history-item-q">${escHtml(s.question)}</div>
+      <div class="history-item-meta">
+        ${legalAreaBadge(s.legalArea)}
+        <span>${jurisdictionLabel(s.jurisdiction)}</span>
+      </div>
+    `;
+    div.onclick = () => loadSession(idx);
+    list.appendChild(div);
+  });
+}
+
+function loadSession(idx) {
+  activeIndex = idx;
+  const s = sessions[idx];
+  document.getElementById('welcomeState') && (document.getElementById('welcomeState').style.display = 'none');
+  const area = document.getElementById('answerArea');
+  area.innerHTML = s.renderedHtml;
+  renderHistory();
+  area.scrollTop = 0;
+}
+
+async function sendQuestion() {
+  if (isLoading) return;
+  const inp = document.getElementById('questionInput');
+  const question = inp.value.trim();
+  if (!question) return;
+
+  const legalArea  = document.getElementById('legalAreaSelect').value;
+  const jurisdiction = document.getElementById('jurisdictionSelect').value;
+  const format  = document.getElementById('formatSelect').value;
+
+  // Guest check
+  const accessCode = localStorage.getItem('gavel_access_code');
+  if (!accessCode) {
+    try {
+      const checkRes = await fetch('/.netlify/functions/check-guest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'check' })
+      });
+      const checkData = await checkRes.json();
+      if (!checkData.allowed) { showPaywall(); return; }
+      await fetch('/.netlify/functions/check-guest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'increment' })
+      });
+    } catch(e) { console.warn('Guest check failed', e); }
+  }
+
+  inp.value = '';
+  autoResize(inp);
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  const welcome = document.getElementById('welcomeState');
+  if (welcome) welcome.style.display = 'none';
+
+  const area = document.getElementById('answerArea');
+  area.innerHTML = `
+    <div class="loading-state">
+      <div class="loading-dots">
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+      </div>
+      <div class="loading-label">Checking the op files…</div>
+    </div>
+  `;
+
+  try {
+    const systemPrompt = buildSystemPrompt(legalArea, jurisdiction, format);
+    const response = await fetch('/.netlify/functions/claude-proxy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2500,
+        system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+        messages: [{ role: 'user', content: question }]
+      })
+    });
+
+    let rawText = '';
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let hitTokenLimit = false;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      for (const line of chunk.split('\n')) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') break;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+              rawText += parsed.delta.text;
+              area.innerHTML = `<div style="padding:20px;white-space:pre-wrap;font-family:'IBM Plex Mono',monospace;font-size:0.85rem;">${escHtml(rawText)}</div>`;
+              area.scrollTop = area.scrollHeight;
+            }
+            if (parsed.type === 'message_delta' && parsed.delta?.stop_reason === 'max_tokens') {
+              hitTokenLimit = true;
+            }
+          } catch(e) {}
+        }
+      }
+    }
+
+    if (!rawText) rawText = 'No response received.';
+    if (hitTokenLimit) rawText += '\n\n*— Response trimmed at token limit. Try a more focused question. —*';
+
+    const renderedHtml = parseResponse(rawText, question, legalArea, jurisdiction);
+    const session = { question, legalArea, jurisdiction, format, rawText, renderedHtml, timestamp: Date.now() };
+    sessions.push(session);
+    activeIndex = sessions.length - 1;
+    area.innerHTML = renderedHtml;
+    area.scrollTop = 0;
+    renderHistory();
+
+    // GA4 tracking
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'question_submitted', {
+        tool: 'the_gavel',
+        format: format,
+        user_type: window._guestMode ? 'guest' : 'paid'
+      });
+    }
+
+  } catch(err) {
+    area.innerHTML = `<div style="padding:40px;color:var(--red);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;">
+      <strong>The Gavel is running diagnostics.</strong><br><br>
+      Your question may be too broad. Try narrowing it — ask about one specific legal scenario at a time.<br><br>
+      <em>If the problem persists, try a shorter question.</em>
+    </div>`;
+  }
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+}
+
+function showPaywall() {
+  document.body.innerHTML = `
+    <div style="background:#090c0f;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;font-family:'IBM Plex Serif',serif;">
+      <div style="max-width:520px;width:100%;background:#0f1419;border:1px solid #1e2a35;border-radius:16px;padding:48px 40px;text-align:center;">
+        <div style="font-family:monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#4a7fa8;margin-bottom:20px;">Your Free Consultations Are Up</div>
+        <h1 style="font-family:'Bebas Neue',sans-serif;font-size:36px;margin:0 0 12px;color:#e2e8ed;letter-spacing:.08em;">The Gavel</h1>
+        <p style="color:#8fa3b2;line-height:1.7;margin:0 0 28px;font-size:15px;">Choose the plan that fits your writing. Cancel anytime — or own it forever.</p>
+
+        <div style="background:#151c23;border:2px solid #4a7fa8;border-radius:12px;padding:24px;margin-bottom:14px;position:relative;">
+          <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#4a7fa8;color:#040810;font-family:monospace;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:3px 12px;border-radius:999px;">Most Popular</div>
+          <div style="font-family:monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#4a7fa8;margin-bottom:8px;">Monthly Access</div>
+          <div style="font-size:32px;font-weight:900;color:#e2e8ed;font-family:sans-serif;margin-bottom:4px;">$29.99<span style="font-size:16px;color:#5a7a8a;font-weight:400;">/mo</span></div>
+          <p style="color:#8fa3b2;font-size:13px;margin:0 0 16px;line-height:1.6;">Unlimited consultations. Write without limits. Cancel when your book is done.</p>
+          <a href="https://buy.stripe.com/bJe8wPdr1avO6Mj9p6dAk05" style="display:block;width:100%;background:#4a7fa8;color:#040810;font-family:sans-serif;font-weight:700;font-size:15px;padding:14px;border-radius:8px;cursor:pointer;text-decoration:none;box-sizing:border-box;">Full Membership — $29.99/mo →</a>
+        </div>
+
+        <div style="background:#151c23;border:1px solid #1e2a35;border-radius:12px;padding:24px;margin-bottom:24px;">
+          <div style="font-family:monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#5a7a8a;margin-bottom:8px;">Consult Pack</div>
+          <div style="font-size:28px;font-weight:900;color:#e2e8ed;font-family:sans-serif;margin-bottom:4px;">$19.99<span style="font-size:14px;color:#5a7a8a;font-weight:400;"> one time</span></div>
+          <p style="color:#8fa3b2;font-size:13px;margin:0 0 16px;line-height:1.6;">100 consults. Lifetime access. One payment, no subscription required.</p>
+          <a href="https://buy.stripe.com/bJe14n86HdI0b2z0SAdAk04" style="display:block;width:100%;background:transparent;border:1px solid #2a3d4f;color:#8fa3b2;font-family:sans-serif;font-weight:600;font-size:15px;padding:14px;border-radius:8px;cursor:pointer;text-decoration:none;box-sizing:border-box;">Get Access — $19.99 →</a>
+        </div>
+
+        <div style="border-top:1px solid #1e2a35;margin:0 0 20px;"></div>
+        <p style="color:#5a7a8a;font-family:monospace;font-size:12px;margin:0 0 10px;">Already have an access code?</p>
+        <input
+          id="codeInput"
+          type="text"
+          placeholder="Enter code (TAR-XXXXXXXX)"
+          style="width:100%;background:#090c0f;border:1px solid #2a3d4f;border-radius:6px;color:#e2e8ed;font-family:monospace;font-size:14px;padding:12px 16px;margin-bottom:10px;outline:none;text-align:center;letter-spacing:.08em;box-sizing:border-box;"
+          onkeydown="if(event.key==='Enter')validateCode()"
+        />
+        <div id="codeError" style="color:#a84040;font-family:monospace;font-size:12px;margin-bottom:12px;min-height:18px;"></div>
+        <button onclick="validateCode()" style="width:100%;background:transparent;border:1px solid #2a3d4f;color:#8fa3b2;font-family:sans-serif;font-weight:600;font-size:14px;padding:12px;border-radius:8px;cursor:pointer;margin-bottom:16px;">Enter Code →</button>
+        <p style="color:#3a5060;font-family:monospace;font-size:11px;margin:0;">Lost your code? <a href="mailto:jeff@actionauthors.com" style="color:#4a7fa8;">jeff@actionauthors.com</a></p>
+      </div>
+    </div>
+  `;
+}
+
+async function validateCode() {
+  const input = document.getElementById('codeInput');
+  const error = document.getElementById('codeError');
+  const code = input.value.trim().toUpperCase();
+
+  if (!code) {
+    error.textContent = 'Please enter your access code.';
+    return;
+  }
+
+  try {
+    const res = await fetch(`/.netlify/functions/validate-code?code=${encodeURIComponent(code)}`);
+    const data = await res.json();
+
+    if (data.valid) {
+      localStorage.setItem('gavel_access_code', code);
+      location.reload();
+    } else {
+      error.textContent = 'Invalid access code. Please check and try again.';
+    }
+  } catch(e) {
+    error.textContent = 'Connection error. Please try again.';
+  }
+}
+
+function exportSession() {
+  if (sessions.length === 0) { alert('No session to export yet.'); return; }
+  let md = `# The Gavel — Research Session\nExported: ${new Date().toLocaleString()}\n\n---\n\n`;
+  sessions.forEach((s, i) => {
+    md += `## Q${i+1}: ${s.question}\n`;
+    md += `*Legal Area: ${s.legalArea} | Jurisdiction: ${jurisdictionLabel(s.jurisdiction)}*\n\n`;
+    md += s.rawText + '\n\n---\n\n';
+  });
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
+    const win = window.open('', '_blank');
+    win.document.write('<html><head><title>The Gavel — Session Export</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><pre style="font-family:monospace;font-size:13px;padding:20px;white-space:pre-wrap;word-wrap:break-word;">' + md.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</pre></body></html>');
+    win.document.close();
+  } else {
+    const blob = new Blob([md], { type: 'text/markdown' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `the-gavel-session-${Date.now()}.md`;
+    a.click();
+  }
+}
+
+function clearAll() {
+  if (sessions.length === 0) return;
+  if (!confirm('Clear all op files?')) return;
+  sessions = [];
+  activeIndex = -1;
+  document.getElementById('answerArea').innerHTML = `
+    <div class="welcome" id="welcomeState">
+      <div class="welcome-icon">⚖️</div>
+      <h2>The Gavel</h2>
+      <p>Ask about criminal defense strategy, trial procedure, evidence and search & seizure, prosecution decisions, sentencing, and the ethical gray zones lawyers operate in.</p>
+      <div class="welcome-byline">Powered by Victoria Mills — She got people off on technicalities other lawyers missed. She knows exactly where the line is.<br><br><em style="font-size:0.75rem;opacity:0.85;"><a href="https://www.amazon.com/dp/B0FMY9Q8LX" target="_blank" style="color:#4a7fa8 !important; text-decoration:none;">Meet Victoria Mills in Terminal Hitman: State of Deception →</a></em></div>
+    </div>
+  `;
+  renderHistory();
+}
+</script>
+
+<!-- FOOTER -->
+<footer style="
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+">
+  <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-muted); letter-spacing:0.5px;">
+    © 2026 Jeff Bonilla · The Writers Precinct
+  </span>
+  <div style="display:flex; gap:24px; align-items:center;">
+    <a href="mailto:jeff@actionauthors.com" style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim); text-decoration:none; letter-spacing:0.5px; transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim)'">Contact Us</a>
+    <a href="https://billing.stripe.com/p/login/3cI6oH2Mn6fy4EbcBidAk00" target="_blank" style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim); text-decoration:none; letter-spacing:0.5px; transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim)'">Manage / Cancel Subscription</a>
+    <a href="https://thewritersprecinct.com" target="_blank" style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; letter-spacing:0.5px; text-decoration:none; background:var(--accent); color:#fff; padding:6px 14px; border-radius:6px; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Explore the Full Suite →</a>
+  </div>
+</footer>
+
+</body>
+</html>
